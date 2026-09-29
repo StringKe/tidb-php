@@ -1,0 +1,7 @@
+[security]
+ssl-ca = "/certs/ca.pem"
+ssl-cert = "/certs/server.pem"
+ssl-key = "/certs/server-key.pem"
+
+[log]
+level = "warn"

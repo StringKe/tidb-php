@@ -1,0 +1,41 @@
+# TiDB for the tests, with TLS from a throwaway CA so sslmode=verify_ca and verify_identity can be exercised.
+# `docker compose up -d --wait`, then run the tests; `docker compose down -v` removes everything.
+name: pdo-tidb-tests
+
+services:
+  certs:
+    image: alpine:3.22
+    volumes:
+      - ./tests/certs:/certs
+    entrypoint: ["/bin/sh", "-c"]
+    command:
+      - |
+        set -e
+        test -f /certs/server.pem && exit 0
+        apk add --no-cache openssl >/dev/null
+        cd /certs
+        openssl req -x509 -newkey rsa:2048 -nodes -days 3650 -subj "/CN=pdo_tidb test CA" -keyout ca-key.pem -out ca.pem
+        openssl req -newkey rsa:2048 -nodes -subj "/CN=localhost" -keyout server-key.pem -out server.csr
+        printf 'subjectAltName=DNS:localhost,IP:127.0.0.1\n' > san.ext
+        openssl x509 -req -in server.csr -CA ca.pem -CAkey ca-key.pem -CAcreateserial -days 3650 -extfile san.ext -out server.pem
+        openssl req -newkey rsa:2048 -nodes -subj "/CN=pdo_tidb_client" -keyout client-key.pem -out client.csr
+        openssl x509 -req -in client.csr -CA ca.pem -CAkey ca-key.pem -CAcreateserial -days 3650 -out client.pem
+        chmod 644 *.pem
+
+  tidb:
+    image: pingcap/tidb:v8.5.8
+    depends_on:
+      certs:
+        condition: service_completed_successfully
+    command: ["--store=unistore", "--path=/tmp/tidb", "--host=0.0.0.0", "--status-host=0.0.0.0", "--config=/etc/tidb.toml"]
+    volumes:
+      - ./tests/certs:/certs:ro
+      - ./tests/tidb.toml:/etc/tidb.toml:ro
+    ports:
+      - "127.0.0.1:4400:4000"
+      - "127.0.0.1:10480:10080"
+    healthcheck:
+      test: ["CMD", "wget", "-q", "-O", "-", "http://127.0.0.1:10080/status"]
+      interval: 2s
+      timeout: 2s
+      retries: 30

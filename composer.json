@@ -1,0 +1,36 @@
+{
+  "name": "stringke/tidb-php",
+  "description": "Native PDO driver for TiDB with a full MySQL protocol implementation in Rust: SM3, zstd, server-side cursors, TiDB auth plugins",
+  "type": "php-ext",
+  "license": "Apache-2.0",
+  "keywords": [
+    "pdo",
+    "tidb",
+    "mysql",
+    "database",
+    "extension"
+  ],
+  "homepage": "https://github.com/stringke/tidb-php",
+  "support": {
+    "issues": "https://github.com/stringke/tidb-php/issues",
+    "source": "https://github.com/stringke/tidb-php"
+  },
+  "require": {
+    "php": ">=8.4",
+    "ext-pdo": "*"
+  },
+  "php-ext": {
+    "extension-name": "pdo_tidb",
+    "priority": 30,
+    "os-families-exclude": [
+      "windows"
+    ],
+    "configure-options": [
+      {
+        "name": "with-tidb-ffi",
+        "needs-value": true,
+        "description": "Directory containing a prebuilt libtidb_ffi.a instead of building it with cargo"
+      }
+    ]
+  }
+}

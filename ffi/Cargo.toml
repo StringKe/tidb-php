@@ -1,0 +1,30 @@
+[package]
+name = "tidb-ffi"
+version = "0.1.0"
+edition = "2024"
+rust-version = "1.88"
+license = "Apache-2.0"
+description = "MySQL wire protocol client for TiDB with a C ABI, linked statically into the pdo_tidb PHP extension"
+repository = "https://github.com/stringke/tidb-php"
+publish = false
+
+[lib]
+name = "tidb_ffi"
+crate-type = ["staticlib", "rlib"]
+
+[dependencies]
+flate2 = { version = "1", default-features = false, features = ["zlib-rs"] }
+zstd = { version = "0.14", default-features = false }
+rustls = { version = "0.23", default-features = false, features = ["ring", "std", "tls12", "logging"] }
+rustls-platform-verifier = "0.6"
+rustls-pki-types = { version = "1", features = ["std"] }
+sha1 = "0.10"
+sha2 = "0.10"
+hmac = "0.12"
+pbkdf2 = { version = "0.12", default-features = false, features = ["hmac"] }
+base64 = "0.22"
+rand = "0.9"
+
+[profile.release]
+lto = "thin"
+codegen-units = 1
