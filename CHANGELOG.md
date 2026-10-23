@@ -2,6 +2,12 @@
 
 All notable changes to this project are documented here. The format follows [Keep a Changelog](https://keepachangelog.com/en/1.1.0/) and the project uses [Semantic Versioning](https://semver.org/).
 
+## [0.1.1] - 2026-10-23
+
+### Fixed
+
+- Segmentation fault at process exit on Linux after a connection was made: PHP unloads the module at shutdown before `exit()` runs the Rust thread-local destructors. Seen with the module built by Rust 1.98 while another Rust-based extension such as `pdo_lake` was loaded too. The module is now linked with `-z nodelete`.
+
 ## [0.1.0] - 2026-09-29
 
 First release.
@@ -21,4 +27,5 @@ First release.
 - Handling of TiDB server behaviour: the two OK packets of `COM_REFRESH`, `COM_FIELD_LIST` ignoring its wildcard, `COM_CHANGE_USER` skipping the full-authentication round, the inner packet sequence restarting after each flush under compression, and column definitions without `BLOB_FLAG`.
 - PECL `package.xml` and PIE `composer.json`.
 
+[0.1.1]: https://github.com/stringke/tidb-php/releases/tag/v0.1.1
 [0.1.0]: https://github.com/stringke/tidb-php/releases/tag/v0.1.0

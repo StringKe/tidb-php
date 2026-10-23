@@ -37,7 +37,7 @@ var_dump($st->fetch(PDO::FETCH_ASSOC));
 With PECL, from a release tarball:
 
 ```sh
-pecl install https://github.com/stringke/tidb-php/releases/download/v0.1.0/pdo_tidb-0.1.0.tgz
+pecl install https://github.com/stringke/tidb-php/releases/download/v0.1.1/pdo_tidb-0.1.1.tgz
 ```
 
 With [PIE](https://github.com/php/pie):

@@ -39,7 +39,7 @@ bool(true)
 string(3) "PDO"
 string(8) "Pdo\Tidb"
 string(4) "tidb"
-string(5) "0.1.0"
+string(5) "0.1.1"
 bool(true)
 bool(true)
 bool(true)
