@@ -26,7 +26,9 @@ if test "$PHP_PDO_TIDB" != "no"; then
       TIDB_FFI_SYSTEM_LIBS="-framework CoreFoundation -framework Security -framework SystemConfiguration -liconv -lresolv"
       ;;
     *)
-      TIDB_FFI_SYSTEM_LIBS="-lpthread -ldl -lm -lrt"
+      dnl PHP dlclose()s extensions at shutdown, before exit() runs the Rust thread-local destructors;
+      dnl -z nodelete keeps the module mapped so those destructors do not jump into unmapped code.
+      TIDB_FFI_SYSTEM_LIBS="-lpthread -ldl -lm -lrt -Wl,-z,nodelete"
       ;;
   esac
 
